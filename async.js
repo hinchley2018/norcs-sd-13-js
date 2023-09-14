@@ -1,23 +1,37 @@
-// function wellingtonEats(hamburger, price, timeToCook){
-//     //i'll pay you tuesday I promise :) 
-//     //promise starts as pending
-//     return new Promise(function(resolve, reject){
-//         setTimeout(() => {
-//             // debugger
-//             console.log("its tuesday")
-//             if(price < 0){
-//                 reject("Negative price not allowed")
-//             }
-//             console.log("Paid", price, "for a ", hamburger)
-//             //resolve only takes one param, so if you need more data pass an object
-            
-//             //marks the promise as completed
-//             resolve({hamburger, price})
-//         }, timeToCook)
-        
-//     })
-// }
+function wellingtonEats(hamburger, price, timeToCook){
+    //i'll pay you tuesday I promise :) 
+    //promise starts as pending
+    return new Promise(function(resolve, reject){
+        setTimeout(() => {
+            // debugger
+            console.log("its tuesday")
+            if(price < 0){
+                reject("Negative price not allowed")
+            }
+            console.log("Paid", price, "for a ", hamburger)
+            //resolve only takes one param, so if you need more data pass an object
 
+            //marks the promise as completed
+            resolve({hamburger, price})
+        }, timeToCook)
+
+    })
+}
+//demo error-handling using async await
+async function orderSandwichs(){
+    //try this block
+    try {
+        await wellingtonEats("Arnold Hama Whopper",3.50, 3000)
+        await wellingtonEats("Cowfish Whopper",3.75, 2000)
+        await wellingtonEats("Neg Whopper",-700, 2000)
+    } 
+    //if error is thrown do this block
+    catch (error) {
+        console.error(error)
+    }
+    
+}
+orderSandwichs()
 // let arnoldPromise = wellingtonEats("Arnold Hama Whopper",3.50, 3000)
 // //guaranteed it is done processing, here is my result
 // //then === success / finished
@@ -33,27 +47,27 @@
 
 //no args just pull the data from wherever it is
 //default values for args
-function getPizzaToppings(store = undefined){
-    return new Promise(function(resolve, reject){
+function getPizzaToppings(store = undefined) {
+    return new Promise(function (resolve, reject) {
         setTimeout(() => {
-            if(store !== undefined && store.location === "Dallas"){
-                let toppings = ["blue cheese", "blue pineapples", "blue spinach", "blue mushrooms","bacon"]
-                resolve(toppings)    
+            if (store !== undefined && store.location === "Dallas") {
+                let toppings = ["blue cheese", "blue pineapples", "blue spinach", "blue mushrooms", "bacon"]
+                resolve(toppings)
             }
             else {
-                let toppings = ["cheese", "pineapples", "spinach", "mushrooms","bacon"]
-                resolve(toppings)    
+                let toppings = ["cheese", "pineapples", "spinach", "mushrooms", "bacon"]
+                resolve(toppings)
             }
         }, 1500)
     })
 }
 //make it able to call await, and clean up code
-async function getMenuPage(){
+async function getMenuPage() {
     console.log("in async")
     //because i'm inside the async function I can wait for things without a promise
     //await gives us what the promise resolves as a value
     let toppings = await getPizzaToppings()
-    console.log("what are we waiting for",toppings)
+    console.log("what are we waiting for", toppings)
 
     let pizzaPrices = await getPizzaPrices()
     console.log("after await")
@@ -62,8 +76,8 @@ async function getMenuPage(){
 getMenuPage()
 //out in the open not in async function
 // await getPizzaToppings() //dangerous breaks whole application
-function getPizzaPrices(){
-    return new Promise(function(resolve, reject){
+function getPizzaPrices() {
+    return new Promise(function (resolve, reject) {
         //we don't know how long to load prices
         setTimeout(() => {
             let prices = [
@@ -79,14 +93,14 @@ function getPizzaPrices(){
                     price: 4,
                     size: 'mini'
                 }
-            ]   
+            ]
             resolve(prices)
         }, 2000)
     })
 }
 
-function getStores(){
-    return new Promise(function(resolve, reject){
+function getStores() {
+    return new Promise(function (resolve, reject) {
         //we don't know how long to load prices
         setTimeout(() => {
             let stores = [
@@ -98,21 +112,21 @@ function getStores(){
                     location: "Houston",
                     hours: 'M-F 8-9pm'
                 }
-            ]   
+            ]
             resolve(stores)
         }, 2000)
     })
 }
 
-function getOrders(){
-    return new Promise(function(resolve, reject){
+function getOrders() {
+    return new Promise(function (resolve, reject) {
         //we don't know how long to load prices
         setTimeout(() => {
             let orders = [
                 {
                     price: 10,
                     size: 'large',
-                    toppings: ["pep","spinach"]
+                    toppings: ["pep", "spinach"]
                 },
                 {
                     price: 6,
@@ -124,7 +138,7 @@ function getOrders(){
                     size: 'mini',
                     toppings: ["pineapple"]
                 }
-            ]   
+            ]
             resolve(orders)
         }, 2000)
     })
@@ -152,11 +166,19 @@ function getOrders(){
 // })
 
 
-function searchProductList(searchTerm){
-    
+function searchProductList(searchTerm) {
+
     let products = [
         {
-            name: "Dog food",
+            name: "Pedigree Dog food",
+            price: 8.94
+        },
+        {
+            name: "Pedigree wet dog food",
+            price: 8.94
+        },
+        {
+            name: "Blue ribbon Dog food",
             price: 8.94
         },
         {
@@ -169,20 +191,86 @@ function searchProductList(searchTerm){
         }
     ]
 
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
         resolve(products.filter(p => p.name.toLowerCase() === searchTerm.toLowerCase()))
     })
 }
 
+function getAvailableFilters(){
+    return new Promise((resolve, reject) => {
+        let availableFilters = {
+            brands: ["Blue ribbon", "Pedigree", "Amazon Basics"],
+            types: ["wet", "dry"],
+            minPrice: 0,
+            maxPrice: 600
+        }
+        resolve(availableFilters)
+    })
+}
+function displayFilters(){}
+function displayProducts() {}
 //build the page
-async function buildSearchPage(){
+async function buildSearchPage() {
     debugger
     let userSearchTerm = prompt("Enter the product you want to search")
-    if(userSearchTerm === undefined){
+    if (userSearchTerm === undefined) {
         console.log("go to homescreen")
     }
-    let products = await searchProductList(userSearchTerm)
+    //get filters
+    let filters = await getAvailableFilters()
+    displayFilters(filters)
+    let userFilters = {
+        brand: "Pedigree",
+        type: "dry"
+    }
+    let products = await searchProductList(userSearchTerm,userFilters)
     //assume I can draw on screen, how to get the products?
     displayProducts(products)
 }
-buildSearchPage()
+// buildSearchPage()
+
+
+function cookBacon(){
+    return new Promise(function (resolve, reject) {
+        setTimeout(() => {
+            console.log("cooked bacon")   
+            resolve()
+        },3000)
+    })
+}
+
+function cookEggs(){
+    return new Promise(function (resolve, reject) {
+        setTimeout(() => {
+            console.log("cooked eggs")   
+            resolve()
+        },1200)
+    })
+}
+
+function makeTea(){
+    return new Promise(function (resolve, reject) {
+        setTimeout(() => {
+            console.log("tea")   
+            resolve()
+        },1000)
+    })
+}
+
+function serve(){
+    console.log("Lets eat")
+}
+
+async function makeBreakfast(){
+    //once all of these promies resolve do my .then
+    await Promise.all([
+        cookBacon(),
+        cookEggs(),
+        makeTea()
+    ])
+    serve()
+    
+    
+}
+
+makeBreakfast()
